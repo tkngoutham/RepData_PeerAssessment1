@@ -1,15 +1,11 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
 
 Note :Set the working directory
-```{r}
+
+```r
 setwd('/home/kushwanth/machinelearning/r_practice/DataScience_Specialization/reproducible research')
 activity_data<-read.csv('activity.csv',header = TRUE,sep=',')
 activity_data$date<-as.character(activity_data$date)
@@ -21,7 +17,8 @@ activity_data$date<-as.Date(activity_data$date,'%Y-%m-%d')
 
 ###Calculate the total number of steps taken per day
 
-```{r}
+
+```r
 sum_days<-data.frame()
 days<-unique(activity_data$date)
 
@@ -35,25 +32,39 @@ Above data frame 'sum_days' has total number of steps taken per day
 
 ### Make a histogram of the total number of steps taken each day
 
-```{r}
+
+```r
 hist(sum_days$sum,xlab='Steps Taken per Day',main='')
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)\
 Above is histogram for Steps taken per day
 
 ### The mean and median of the total number of steps taken per day
 
-```{r}
+
+```r
 mean(sum_days$sum)
+```
 
+```
+## [1] 9354.23
+```
+
+```r
 median(sum_days$sum)
+```
 
+```
+## [1] 10395
 ```
 
 
 ## What is the average daily activity pattern?
 ### A time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
-```{r}
+
+```r
 time_intervals<-unique(activity_data$interval)
 avg_time_frame<-data.frame()
 for(index in 1:length(time_intervals)){
@@ -62,28 +73,55 @@ for(index in 1:length(time_intervals)){
 names(avg_time_frame)<-c('avg_steps')
 plot(time_intervals,avg_time_frame$avg_steps,type = 'l',xlab = 'Time Intervals',ylab='Frequency',main='Time Averaged Steps')
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)\
 'avg_time_frame' is a data frame used to generate the plot
 
 ### The 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps :
 
-```{r}
+
+```r
 avg_time_frame$time_intervals<-time_intervals
 avg_time_frame$time_intervals[avg_time_frame$avg_steps==max(avg_time_frame$avg_steps)]
+```
+
+```
+## [1] 835
 ```
 
 ## Imputing missing values
 
 ### The total number of missing values in the dataset (i.e. the total number of rows with NAs)
 
-```{r}
+
+```r
 sum(is.na(activity_data$steps)==TRUE)
+```
+
+```
+## [1] 2304
+```
+
+```r
 sum(is.na(activity_data$date)==TRUE)
+```
+
+```
+## [1] 0
+```
+
+```r
 sum(is.na(activity_data$interval)==TRUE)
+```
+
+```
+## [1] 0
 ```
 
 ### Strategy for filling in all of the missing values in the dataset :  the mean for that 5-minute interval. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
-```{r}
+
+```r
 na_dates<-unique(activity_data$date[is.na(activity_data$steps)])
 imputed_activity_data<-activity_data
 for(index in 1:length(na_dates)){
@@ -95,7 +133,8 @@ for(index in 1:length(na_dates)){
 
 ###Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. 
 
-```{r}
+
+```r
 days<-unique(imputed_activity_data$date)
 imputed_sum_days<-data.frame()
 for(index in 1:length(days)){
@@ -103,11 +142,24 @@ for(index in 1:length(days)){
 }
 names(imputed_sum_days)<-c('sum')
 hist(imputed_sum_days$sum,xlab='Steps Taken per Day',main='Imputed')
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-9-1.png)\
 
+```r
 mean(imputed_sum_days$sum)
-median(imputed_sum_days$sum)
+```
 
+```
+## [1] 10766.19
+```
+
+```r
+median(imputed_sum_days$sum)
+```
+
+```
+## [1] 10766.19
 ```
 
 
@@ -117,7 +169,8 @@ median(imputed_sum_days$sum)
 
 From the above histogram we can identify that the data is more centered biases in data were reduced. i.e.  imputing missing data with mean per time interval reduces biases.
 
-```{r}
+
+```r
 time_intervals<-unique(imputed_activity_data$interval)
 imputed_avg_time_frame<-data.frame()
 for(index in 1:length(time_intervals)){
@@ -127,11 +180,14 @@ names(imputed_avg_time_frame)<-c('avg_steps')
 plot(time_intervals,imputed_avg_time_frame$avg_steps,type = 'l',xlab = 'Time Intervals',ylab='Frequency',main='Time Averaged Steps(Imputed)')
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-10-1.png)\
+
 ## Are there differences in activity patterns between weekdays and weekends?
 
 ### A new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day is added
 
-```{r}
+
+```r
 for(index in 1:length(imputed_activity_data$date)){
   if(weekdays(imputed_activity_data$date[index])=='Sunday'| weekdays(imputed_activity_data$date[index])=='Saturday')
   {
@@ -146,7 +202,8 @@ for(index in 1:length(imputed_activity_data$date)){
 
 ### Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or  weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.avg_time_frame
 
-```{r}
+
+```r
 weekday_imputed_avg_time_frame<-data.frame()
 weekend_imputed_avg_time_frame<-data.frame()
 for(index in 1:length(time_intervals))
@@ -164,8 +221,9 @@ names(week_imputed_avg_time_frame)<-c('step_avg','interval','day_type')
 library(lattice)
 xyplot(week_imputed_avg_time_frame$step_avg~week_imputed_avg_time_frame$interval|factor(week_imputed_avg_time_frame$day_type),
        type='l',layout=c(1,2),xlab='Interval',ylab='Number of Steps',main='')
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-12-1.png)\
 
 
 
